@@ -8,6 +8,7 @@ import (
 	"github.com/mhsanaei/3x-ui/v2/logger"
 	"github.com/mhsanaei/3x-ui/v2/util/crypto"
 	ldaputil "github.com/mhsanaei/3x-ui/v2/util/ldap"
+	"github.com/mhsanaei/3x-ui/v2/util/random"
 	"github.com/xlzd/gotp"
 	"gorm.io/gorm"
 )
@@ -153,4 +154,46 @@ func (s *UserService) UpdateFirstUser(username string, password string) error {
 	user.Username = username
 	user.Password = hashedPassword
 	return db.Save(user).Error
+}
+
+// GetUserByApiKey retrieves a user by their API key
+func (s *UserService) GetUserByApiKey(apiKey string) (*model.User, error) {
+	if apiKey == "" {
+		return nil, errors.New("api key is empty")
+	}
+	
+	db := database.GetDB()
+	user := &model.User{}
+	err := db.Model(model.User{}).Where("api_key = ?", apiKey).First(user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// GenerateApiKey generates a new API key for a user
+func (s *UserService) GenerateApiKey(userId int) (string, error) {
+	db := database.GetDB()
+	
+	// Generate a random API key (64 characters)
+	apiKey := random.Seq(64)
+	
+	// Update the user's API key
+	err := db.Model(model.User{}).Where("id = ?", userId).Update("api_key", apiKey).Error
+	if err != nil {
+		return "", err
+	}
+	
+	return apiKey, nil
+}
+
+// GetApiKey retrieves the current API key for a user
+func (s *UserService) GetApiKey(userId int) (string, error) {
+	db := database.GetDB()
+	user := &model.User{}
+	err := db.Model(model.User{}).Where("id = ?", userId).First(user).Error
+	if err != nil {
+		return "", err
+	}
+	return user.ApiKey, nil
 }

@@ -52,6 +52,7 @@ type AllSetting struct {
 	TimeLocation    string `json:"timeLocation" form:"timeLocation"`       // Time zone location
 	TwoFactorEnable bool   `json:"twoFactorEnable" form:"twoFactorEnable"` // Enable two-factor authentication
 	TwoFactorToken  string `json:"twoFactorToken" form:"twoFactorToken"`   // Two-factor authentication token
+	SwaggerEnable   bool   `json:"swaggerEnable" form:"swaggerEnable"`     // Enable Swagger API documentation
 
 	// Subscription server settings
 	SubEnable                   bool   `json:"subEnable" form:"subEnable"`                                     // Enable subscription server

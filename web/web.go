@@ -95,9 +95,10 @@ type Server struct {
 	httpServer *http.Server
 	listener   net.Listener
 
-	index *controller.IndexController
-	panel *controller.XUIController
-	api   *controller.APIController
+	index   *controller.IndexController
+	panel   *controller.XUIController
+	api     *controller.APIController
+	swagger *controller.SwaggerController
 
 	xrayService    service.XrayService
 	settingService service.SettingService
@@ -265,6 +266,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	s.index = controller.NewIndexController(g)
 	s.panel = controller.NewXUIController(g)
 	s.api = controller.NewAPIController(g)
+	s.swagger = controller.NewSwaggerController(g)
 
 	// Chrome DevTools endpoint for debugging web apps
 	engine.GET("/.well-known/appspecific/com.chrome.devtools.json", func(c *gin.Context) {

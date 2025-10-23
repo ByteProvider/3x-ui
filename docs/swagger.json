@@ -1,0 +1,576 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API documentation for 3x-ui panel - Xray management system",
+        "title": "3x-ui Panel API",
+        "termsOfService": "https://github.com/ByteProvider/3x-ui",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/ByteProvider/3x-ui/issues"
+        },
+        "license": {
+            "name": "GPL-3.0",
+            "url": "https://github.com/ByteProvider/3x-ui/blob/main/LICENSE"
+        },
+        "version": "2.0"
+    },
+    "host": "localhost:2053",
+    "basePath": "/panel/api",
+    "paths": {
+        "/backuptotgbot": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Send a backup of the panel database to Telegram bot admins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "backup"
+                ],
+                "summary": "Send backup to Telegram",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get detailed information about a specific inbound",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get inbound by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/model.Inbound"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get list of all inbounds for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "List all inbounds",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.Inbound"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/cpuHistory/{bucket}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get aggregated CPU usage history for the specified time bucket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get CPU usage history",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Time bucket in seconds (2, 30, 60, 120, 180)",
+                        "name": "bucket",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/status": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get current server status including CPU, memory, disk usage and Xray status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get server status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/service.Status"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.Msg": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "description": "Response message text",
+                    "type": "string"
+                },
+                "obj": {
+                    "description": "Optional data object"
+                },
+                "success": {
+                    "description": "Indicates if the operation was successful",
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.Inbound": {
+            "type": "object",
+            "properties": {
+                "allTime": {
+                    "description": "All-time traffic usage",
+                    "type": "integer"
+                },
+                "clientStats": {
+                    "description": "Client traffic statistics",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/xray.ClientTraffic"
+                    }
+                },
+                "down": {
+                    "description": "Download traffic in bytes",
+                    "type": "integer"
+                },
+                "enable": {
+                    "description": "Whether the inbound is enabled",
+                    "type": "boolean"
+                },
+                "expiryTime": {
+                    "description": "Expiration timestamp",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "Unique identifier",
+                    "type": "integer"
+                },
+                "lastTrafficResetTime": {
+                    "description": "Last traffic reset timestamp",
+                    "type": "integer"
+                },
+                "listen": {
+                    "description": "Xray configuration fields",
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "protocol": {
+                    "$ref": "#/definitions/model.Protocol"
+                },
+                "remark": {
+                    "description": "Human-readable remark",
+                    "type": "string"
+                },
+                "settings": {
+                    "type": "string"
+                },
+                "sniffing": {
+                    "type": "string"
+                },
+                "streamSettings": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "total": {
+                    "description": "Total traffic limit in bytes",
+                    "type": "integer"
+                },
+                "trafficReset": {
+                    "description": "Traffic reset schedule",
+                    "type": "string"
+                },
+                "up": {
+                    "description": "Upload traffic in bytes",
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Protocol": {
+            "type": "string",
+            "enum": [
+                "vmess",
+                "vless",
+                "tunnel",
+                "http",
+                "trojan",
+                "shadowsocks",
+                "mixed",
+                "wireguard"
+            ],
+            "x-enum-varnames": [
+                "VMESS",
+                "VLESS",
+                "Tunnel",
+                "HTTP",
+                "Trojan",
+                "Shadowsocks",
+                "Mixed",
+                "WireGuard"
+            ]
+        },
+        "service.ProcessState": {
+            "type": "string",
+            "enum": [
+                "running",
+                "stop",
+                "error"
+            ],
+            "x-enum-comments": {
+                "Error": "Process is in error state",
+                "Running": "Process is running normally",
+                "Stop": "Process is stopped"
+            },
+            "x-enum-descriptions": [
+                "Process is running normally",
+                "Process is stopped",
+                "Process is in error state"
+            ],
+            "x-enum-varnames": [
+                "Running",
+                "Stop",
+                "Error"
+            ]
+        },
+        "service.Status": {
+            "type": "object",
+            "properties": {
+                "appStats": {
+                    "type": "object",
+                    "properties": {
+                        "mem": {
+                            "type": "integer"
+                        },
+                        "threads": {
+                            "type": "integer"
+                        },
+                        "uptime": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "cpu": {
+                    "type": "number"
+                },
+                "cpuCores": {
+                    "type": "integer"
+                },
+                "cpuSpeedMhz": {
+                    "type": "number"
+                },
+                "disk": {
+                    "type": "object",
+                    "properties": {
+                        "current": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "loads": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "logicalPro": {
+                    "type": "integer"
+                },
+                "mem": {
+                    "type": "object",
+                    "properties": {
+                        "current": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "netIO": {
+                    "type": "object",
+                    "properties": {
+                        "down": {
+                            "type": "integer"
+                        },
+                        "up": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "netTraffic": {
+                    "type": "object",
+                    "properties": {
+                        "recv": {
+                            "type": "integer"
+                        },
+                        "sent": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "publicIP": {
+                    "type": "object",
+                    "properties": {
+                        "ipv4": {
+                            "type": "string"
+                        },
+                        "ipv6": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "swap": {
+                    "type": "object",
+                    "properties": {
+                        "current": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "tcpCount": {
+                    "type": "integer"
+                },
+                "udpCount": {
+                    "type": "integer"
+                },
+                "uptime": {
+                    "type": "integer"
+                },
+                "xray": {
+                    "type": "object",
+                    "properties": {
+                        "errorMsg": {
+                            "type": "string"
+                        },
+                        "state": {
+                            "$ref": "#/definitions/service.ProcessState"
+                        },
+                        "version": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "xray.ClientTraffic": {
+            "type": "object",
+            "properties": {
+                "allTime": {
+                    "type": "integer"
+                },
+                "down": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "expiryTime": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "inboundId": {
+                    "type": "integer"
+                },
+                "lastOnline": {
+                    "type": "integer"
+                },
+                "reset": {
+                    "type": "integer"
+                },
+                "subId": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "up": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "API Key authentication. Use X-API-Key header or Authorization Bearer token",
+            "type": "apiKey",
+            "name": "X-API-Key",
+            "in": "header"
+        }
+    }
+}

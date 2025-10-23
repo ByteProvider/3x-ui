@@ -53,6 +53,16 @@ func (a *InboundController) initRouter(g *gin.RouterGroup) {
 }
 
 // getInbounds retrieves the list of inbounds for the logged-in user.
+// @Summary      List all inbounds
+// @Description  Get list of all inbounds for the authenticated user
+// @Tags         inbounds
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg{obj=[]model.Inbound}
+// @Failure      400  {object}  entity.Msg
+// @Failure      401  {object}  entity.Msg
+// @Router       /inbounds/list [get]
 func (a *InboundController) getInbounds(c *gin.Context) {
 	user := session.GetLoginUser(c)
 	inbounds, err := a.inboundService.GetInbounds(user.Id)
@@ -64,6 +74,17 @@ func (a *InboundController) getInbounds(c *gin.Context) {
 }
 
 // getInbound retrieves a specific inbound by its ID.
+// @Summary      Get inbound by ID
+// @Description  Get detailed information about a specific inbound
+// @Tags         inbounds
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        id   path      int  true  "Inbound ID"
+// @Success      200  {object}  entity.Msg{obj=model.Inbound}
+// @Failure      400  {object}  entity.Msg
+// @Failure      404  {object}  entity.Msg
+// @Router       /inbounds/get/{id} [get]
 func (a *InboundController) getInbound(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

@@ -82,9 +82,28 @@ func (a *ServerController) startTask() {
 }
 
 // status returns the current server status information.
+// @Summary      Get server status
+// @Description  Get current server status including CPU, memory, disk usage and Xray status
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg{obj=service.Status}
+// @Failure      401  {object}  entity.Msg
+// @Router       /server/status [get]
 func (a *ServerController) status(c *gin.Context) { jsonObj(c, a.lastStatus, nil) }
 
 // getCpuHistoryBucket retrieves aggregated CPU usage history based on the specified time bucket.
+// @Summary      Get CPU usage history
+// @Description  Get aggregated CPU usage history for the specified time bucket
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        bucket  path      int  true  "Time bucket in seconds (2, 30, 60, 120, 180)"
+// @Success      200     {object}  entity.Msg
+// @Failure      400     {object}  entity.Msg
+// @Router       /server/cpuHistory/{bucket} [get]
 func (a *ServerController) getCpuHistoryBucket(c *gin.Context) {
 	bucketStr := c.Param("bucket")
 	bucket, err := strconv.Atoi(bucketStr)

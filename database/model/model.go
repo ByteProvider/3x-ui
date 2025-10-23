@@ -28,6 +28,7 @@ type User struct {
 	Id       int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	ApiKey   string `json:"apiKey" gorm:"uniqueIndex"`
 }
 
 // Inbound represents an Xray inbound configuration with traffic statistics and settings.

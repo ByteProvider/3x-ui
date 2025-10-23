@@ -50,6 +50,7 @@ var defaultValueMap = map[string]string{
 	"tgLang":                      "en-US",
 	"twoFactorEnable":             "false",
 	"twoFactorToken":              "",
+	"swaggerEnable":               "false",
 	"subEnable":                   "true",
 	"subJsonEnable":               "false",
 	"subTitle":                    "",
@@ -356,6 +357,14 @@ func (s *SettingService) GetTwoFactorToken() (string, error) {
 
 func (s *SettingService) SetTwoFactorToken(value string) error {
 	return s.setString("twoFactorToken", value)
+}
+
+func (s *SettingService) GetSwaggerEnable() (bool, error) {
+	return s.getBool("swaggerEnable")
+}
+
+func (s *SettingService) SetSwaggerEnable(value bool) error {
+	return s.setBool("swaggerEnable", value)
 }
 
 func (s *SettingService) GetPort() (int, error) {

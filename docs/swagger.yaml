@@ -1,0 +1,378 @@
+basePath: /panel/api
+definitions:
+  entity.Msg:
+    properties:
+      msg:
+        description: Response message text
+        type: string
+      obj:
+        description: Optional data object
+      success:
+        description: Indicates if the operation was successful
+        type: boolean
+    type: object
+  model.Inbound:
+    properties:
+      allTime:
+        description: All-time traffic usage
+        type: integer
+      clientStats:
+        description: Client traffic statistics
+        items:
+          $ref: '#/definitions/xray.ClientTraffic'
+        type: array
+      down:
+        description: Download traffic in bytes
+        type: integer
+      enable:
+        description: Whether the inbound is enabled
+        type: boolean
+      expiryTime:
+        description: Expiration timestamp
+        type: integer
+      id:
+        description: Unique identifier
+        type: integer
+      lastTrafficResetTime:
+        description: Last traffic reset timestamp
+        type: integer
+      listen:
+        description: Xray configuration fields
+        type: string
+      port:
+        type: integer
+      protocol:
+        $ref: '#/definitions/model.Protocol'
+      remark:
+        description: Human-readable remark
+        type: string
+      settings:
+        type: string
+      sniffing:
+        type: string
+      streamSettings:
+        type: string
+      tag:
+        type: string
+      total:
+        description: Total traffic limit in bytes
+        type: integer
+      trafficReset:
+        description: Traffic reset schedule
+        type: string
+      up:
+        description: Upload traffic in bytes
+        type: integer
+    type: object
+  model.Protocol:
+    enum:
+    - vmess
+    - vless
+    - tunnel
+    - http
+    - trojan
+    - shadowsocks
+    - mixed
+    - wireguard
+    type: string
+    x-enum-varnames:
+    - VMESS
+    - VLESS
+    - Tunnel
+    - HTTP
+    - Trojan
+    - Shadowsocks
+    - Mixed
+    - WireGuard
+  service.ProcessState:
+    enum:
+    - running
+    - stop
+    - error
+    type: string
+    x-enum-comments:
+      Error: Process is in error state
+      Running: Process is running normally
+      Stop: Process is stopped
+    x-enum-descriptions:
+    - Process is running normally
+    - Process is stopped
+    - Process is in error state
+    x-enum-varnames:
+    - Running
+    - Stop
+    - Error
+  service.Status:
+    properties:
+      appStats:
+        properties:
+          mem:
+            type: integer
+          threads:
+            type: integer
+          uptime:
+            type: integer
+        type: object
+      cpu:
+        type: number
+      cpuCores:
+        type: integer
+      cpuSpeedMhz:
+        type: number
+      disk:
+        properties:
+          current:
+            type: integer
+          total:
+            type: integer
+        type: object
+      loads:
+        items:
+          type: number
+        type: array
+      logicalPro:
+        type: integer
+      mem:
+        properties:
+          current:
+            type: integer
+          total:
+            type: integer
+        type: object
+      netIO:
+        properties:
+          down:
+            type: integer
+          up:
+            type: integer
+        type: object
+      netTraffic:
+        properties:
+          recv:
+            type: integer
+          sent:
+            type: integer
+        type: object
+      publicIP:
+        properties:
+          ipv4:
+            type: string
+          ipv6:
+            type: string
+        type: object
+      swap:
+        properties:
+          current:
+            type: integer
+          total:
+            type: integer
+        type: object
+      tcpCount:
+        type: integer
+      udpCount:
+        type: integer
+      uptime:
+        type: integer
+      xray:
+        properties:
+          errorMsg:
+            type: string
+          state:
+            $ref: '#/definitions/service.ProcessState'
+          version:
+            type: string
+        type: object
+    type: object
+  xray.ClientTraffic:
+    properties:
+      allTime:
+        type: integer
+      down:
+        type: integer
+      email:
+        type: string
+      enable:
+        type: boolean
+      expiryTime:
+        type: integer
+      id:
+        type: integer
+      inboundId:
+        type: integer
+      lastOnline:
+        type: integer
+      reset:
+        type: integer
+      subId:
+        type: string
+      total:
+        type: integer
+      up:
+        type: integer
+      uuid:
+        type: string
+    type: object
+host: localhost:2053
+info:
+  contact:
+    name: API Support
+    url: https://github.com/ByteProvider/3x-ui/issues
+  description: API documentation for 3x-ui panel - Xray management system
+  license:
+    name: GPL-3.0
+    url: https://github.com/ByteProvider/3x-ui/blob/main/LICENSE
+  termsOfService: https://github.com/ByteProvider/3x-ui
+  title: 3x-ui Panel API
+  version: "2.0"
+paths:
+  /backuptotgbot:
+    get:
+      consumes:
+      - application/json
+      description: Send a backup of the panel database to Telegram bot admins
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Send backup to Telegram
+      tags:
+      - backup
+  /inbounds/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific inbound
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/model.Inbound'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get inbound by ID
+      tags:
+      - inbounds
+  /inbounds/list:
+    get:
+      consumes:
+      - application/json
+      description: Get list of all inbounds for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  items:
+                    $ref: '#/definitions/model.Inbound'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: List all inbounds
+      tags:
+      - inbounds
+  /server/cpuHistory/{bucket}:
+    get:
+      consumes:
+      - application/json
+      description: Get aggregated CPU usage history for the specified time bucket
+      parameters:
+      - description: Time bucket in seconds (2, 30, 60, 120, 180)
+        in: path
+        name: bucket
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get CPU usage history
+      tags:
+      - server
+  /server/status:
+    get:
+      consumes:
+      - application/json
+      description: Get current server status including CPU, memory, disk usage and
+        Xray status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/service.Status'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get server status
+      tags:
+      - server
+securityDefinitions:
+  ApiKeyAuth:
+    description: API Key authentication. Use X-API-Key header or Authorization Bearer
+      token
+    in: header
+    name: X-API-Key
+    type: apiKey
+swagger: "2.0"

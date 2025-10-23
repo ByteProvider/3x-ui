@@ -1,5 +1,24 @@
 // Package main is the entry point for the 3x-ui web panel application.
 // It initializes the database, web server, and handles command-line operations for managing the panel.
+//
+// @title           3x-ui Panel API
+// @version         2.0
+// @description     API documentation for 3x-ui panel - Xray management system
+// @termsOfService  https://github.com/ByteProvider/3x-ui
+//
+// @contact.name   API Support
+// @contact.url    https://github.com/ByteProvider/3x-ui/issues
+//
+// @license.name  GPL-3.0
+// @license.url   https://github.com/ByteProvider/3x-ui/blob/main/LICENSE
+//
+// @host      localhost:2053
+// @BasePath  /panel/api
+//
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        X-API-Key
+// @description                 API Key authentication. Use X-API-Key header or Authorization Bearer token
 package main
 
 import (

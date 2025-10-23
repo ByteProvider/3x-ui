@@ -40,5 +40,37 @@
             </template>
         </a-setting-list-item>
     </a-collapse-panel>
+    <a-collapse-panel key="3" header='API Key Authentication'>
+        <a-setting-list-item paddings="small">
+            <template #title>API Key</template>
+            <template #description>Use this API key to authenticate API requests. Add it as "X-API-Key" header or "Authorization: Bearer" header.</template>
+            <template #control>
+                <a-space direction="horizontal">
+                    <a-input-password :value="apiKey" style="width: 400px;" readonly>
+                        <template #addonAfter>
+                            <a-tooltip title="Copy">
+                                <a-icon type="copy" @click="copyApiKey" style="cursor: pointer;" />
+                            </a-tooltip>
+                        </template>
+                    </a-input-password>
+                </a-space>
+            </template>
+        </a-setting-list-item>
+        <a-list-item>
+            <a-space direction="horizontal" :style="{ padding: '0 20px' }">
+                <a-button type="primary" @click="generateApiKey">Generate New API Key</a-button>
+                <a-button @click="loadApiKey">Refresh</a-button>
+            </a-space>
+        </a-list-item>
+    </a-collapse-panel>
+    <a-collapse-panel key="4" header='API Documentation (Swagger)'>
+        <a-setting-list-item paddings="small">
+            <template #title>Enable Swagger Documentation</template>
+            <template #description>Enable or disable the Swagger API documentation. Access it at /swagger/index.html when enabled. Remember to save settings after toggling.</template>
+            <template #control>
+                <a-switch v-model="allSetting.swaggerEnable"></a-switch>
+            </template>
+        </a-setting-list-item>
+    </a-collapse-panel>
 </a-collapse>
 {{end}}

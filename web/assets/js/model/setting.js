@@ -25,6 +25,7 @@ class AllSetting {
         this.tgLang = "en-US";
         this.twoFactorEnable = false;
         this.twoFactorToken = "";
+        this.swaggerEnable = false;
         this.xrayTemplateConfig = "";
         this.subEnable = true;
         this.subJsonEnable = false;

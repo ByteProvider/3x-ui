@@ -101,7 +101,7 @@
 {{template "page/body_scripts" .}}
 <script src="{{ .base_path }}assets/qrcode/qrious2.min.js?{{ .cur_ver }}"></script>
 <script src="{{ .base_path }}assets/otpauth/otpauth.umd.min.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/model/setting.js?{{ .cur_ver }}"></script>
+<script src="{{ .base_path }}assets/js/model/setting.js?v2{{ .cur_ver }}"></script>
 {{template "component/aSidebar" .}}
 {{template "component/aThemeSwitch" .}}
 {{template "component/aSettingListItem" .}}
@@ -121,6 +121,7 @@
       allSetting: new AllSetting(),
       saveBtnDisable: true,
       user: {},
+      apiKey: '',
       lang: LanguageManager.getLanguage(),
       inboundOptions: [],
       remarkModels: { i: 'Inbound', e: 'Email', o: 'Other' },
@@ -245,6 +246,40 @@
           this.allSetting = new AllSetting(msg.obj);
           app.changeRemarkSample();
           this.saveBtnDisable = true;
+        }
+      },
+      async loadApiKey() {
+        const msg = await HttpUtil.get("/panel/setting/getApiKey");
+        if (msg.success) {
+          this.apiKey = msg.obj || '';
+        }
+      },
+      async generateApiKey() {
+        await new Promise(resolve => {
+          this.$confirm({
+            title: 'Generate New API Key',
+            content: 'This will invalidate your current API key. Are you sure?',
+            class: themeSwitcher.currentTheme,
+            okText: '{{ i18n "sure" }}',
+            cancelText: '{{ i18n "cancel" }}',
+            onOk: () => resolve(),
+          });
+        });
+        this.loading(true);
+        const msg = await HttpUtil.post("/panel/setting/generateApiKey");
+        this.loading(false);
+        if (msg.success) {
+          this.apiKey = msg.obj;
+          this.$message.success('API Key generated successfully');
+        }
+      },
+      copyApiKey() {
+        if (this.apiKey) {
+          navigator.clipboard.writeText(this.apiKey).then(() => {
+            this.$message.success('API Key copied to clipboard');
+          }).catch(() => {
+            this.$message.error('Failed to copy API Key');
+          });
         }
       },
       async loadInboundTags() {
@@ -570,6 +605,7 @@
     async mounted() {
       await this.getAllSetting();
       await this.loadInboundTags();
+      await this.loadApiKey();
       while (true) {
         await PromiseUtil.sleep(1000);
         this.saveBtnDisable = this.oldAllSetting.equals(this.allSetting);
