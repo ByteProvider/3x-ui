@@ -151,66 +151,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/inbounds/addClientWithLink": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Add a new client to an existing inbound configuration and return the connection link (vless://, vmess://, etc.)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "inbounds"
-                ],
-                "summary": "Add client to inbound with link",
-                "parameters": [
-                    {
-                        "description": "Client data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Inbound"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entity.Msg"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "obj": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Msg"
-                        }
-                    }
-                }
-            }
-        },
         "/inbounds/clearClientIps/{email}": {
             "post": {
                 "security": [
@@ -1130,6 +1070,72 @@ const docTemplate = `{
                 }
             }
         },
+        "/panel/api/inbounds/addClientWithLink": {
+            "post": {
+                "description": "Add a new client with only email and inbound ID - other fields are auto-generated. Returns the connection link (vless://, vmess://, trojan://, ss://)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Add client to inbound with link (simplified)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key for authentication",
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Client request with email and inbound ID",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.AddClientRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns link, email, and client details",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
         "/server/cpuHistory/{bucket}": {
             "get": {
                 "security": [
@@ -1888,6 +1894,43 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.AddClientRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "inboundId"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Client email",
+                    "type": "string"
+                },
+                "expiryTime": {
+                    "description": "Expiration time in milliseconds (0 for no expiration)",
+                    "type": "integer"
+                },
+                "inboundId": {
+                    "description": "Inbound ID",
+                    "type": "integer"
+                },
+                "limitIp": {
+                    "description": "IP limit (0 for unlimited)",
+                    "type": "integer"
+                },
+                "subId": {
+                    "description": "Subscription ID",
+                    "type": "string"
+                },
+                "tgId": {
+                    "description": "Telegram ID",
+                    "type": "integer"
+                },
+                "totalGB": {
+                    "description": "Total traffic in GB (0 for unlimited)",
+                    "type": "integer"
+                }
+            }
+        },
         "entity.Msg": {
             "type": "object",
             "properties": {

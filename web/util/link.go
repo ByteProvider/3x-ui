@@ -6,10 +6,53 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/mhsanaei/3x-ui/v2/database/model"
 	"github.com/mhsanaei/3x-ui/v2/util/random"
 )
+
+// GenerateClientDefaults generates a client with default values based on protocol
+func GenerateClientDefaults(protocol model.Protocol, email string, totalGB, expiryTime int64, limitIP int, tgID int64, subID string) (any, error) {
+	now := time.Now().Unix() * 1000
+	client := map[string]any{
+		"email":      email,
+		"enable":     true,
+		"limitIp":    limitIP,
+		"totalGB":    totalGB * 1024 * 1024 * 1024, // Convert GB to bytes
+		"expiryTime": expiryTime,
+		"tgId":       tgID,
+		"subId":      subID,
+		"reset":      0,
+		"created_at": now,
+		"updated_at": now,
+	}
+
+	switch protocol {
+	case model.VMESS:
+		// Generate UUID for VMess
+		client["id"] = uuid.New().String()
+		client["security"] = "auto"
+		client["alterId"] = 0
+	case model.VLESS:
+		// Generate UUID for VLESS
+		client["id"] = uuid.New().String()
+		client["flow"] = ""
+	case model.Trojan:
+		// Generate random password for Trojan
+		client["password"] = random.Seq(32)
+		client["flow"] = ""
+	case model.Shadowsocks:
+		// Generate random password for Shadowsocks
+		client["password"] = random.Seq(32)
+		// Note: method is configured at inbound level, not client level
+	default:
+		return nil, fmt.Errorf("unsupported protocol: %s", protocol)
+	}
+
+	return client, nil
+}
 
 // GetClientLink generates a connection link (vless://, vmess://, etc.) for a client
 func GetClientLink(inbound *model.Inbound, email, address string) string {
