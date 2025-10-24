@@ -1,4 +1,3 @@
-basePath: /panel/api
 definitions:
   entity.Msg:
     properties:
@@ -212,18 +211,8 @@ definitions:
       uuid:
         type: string
     type: object
-host: localhost:2053
 info:
-  contact:
-    name: API Support
-    url: https://github.com/ByteProvider/3x-ui/issues
-  description: API documentation for 3x-ui panel - Xray management system
-  license:
-    name: GPL-3.0
-    url: https://github.com/ByteProvider/3x-ui/blob/main/LICENSE
-  termsOfService: https://github.com/ByteProvider/3x-ui
-  title: 3x-ui Panel API
-  version: "2.0"
+  contact: {}
 paths:
   /backuptotgbot:
     get:
@@ -403,6 +392,42 @@ paths:
       summary: Add client to inbound
       tags:
       - inbounds
+  /inbounds/addClientWithLink:
+    post:
+      consumes:
+      - application/json
+      description: Add a new client to an existing inbound configuration and return
+        the connection link (vless://, vmess://, etc.)
+      parameters:
+      - description: Client data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Inbound'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Add client to inbound with link
+      tags:
+      - inbounds
   /inbounds/clearClientIps/{email}:
     post:
       consumes:
@@ -455,40 +480,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get client IP addresses
-      tags:
-      - inbounds
-  /inbounds/createClient:
-    post:
-      consumes:
-      - application/json
-      description: Create a new client and automatically generate configuration link
-        (vless://, vmess://, etc.)
-      parameters:
-      - description: Client creation request
-        in: body
-        name: request
-        required: true
-        schema:
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Returns client UUID, email, and config link
-          schema:
-            allOf:
-            - $ref: '#/definitions/entity.Msg'
-            - properties:
-                obj:
-                  type: object
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/entity.Msg'
-      security:
-      - ApiKeyAuth: []
-      summary: Create client with config link
       tags:
       - inbounds
   /inbounds/del/{id}:
@@ -1375,11 +1366,4 @@ paths:
       summary: Get Xray logs
       tags:
       - server
-securityDefinitions:
-  ApiKeyAuth:
-    description: API Key authentication. Use X-API-Key header or Authorization Bearer
-      token
-    in: header
-    name: X-API-Key
-    type: apiKey
 swagger: "2.0"

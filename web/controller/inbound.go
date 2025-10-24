@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
+	"strings"
 
-	"github.com/google/uuid"
 	"github.com/mhsanaei/3x-ui/v2/database/model"
-	"github.com/mhsanaei/3x-ui/v2/sub"
-	"github.com/mhsanaei/3x-ui/v2/util/random"
 	"github.com/mhsanaei/3x-ui/v2/web/service"
 	"github.com/mhsanaei/3x-ui/v2/web/session"
+	webutil "github.com/mhsanaei/3x-ui/v2/web/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +18,7 @@ import (
 type InboundController struct {
 	inboundService service.InboundService
 	xrayService    service.XrayService
+	settingService service.SettingService
 }
 
 // NewInboundController creates a new InboundController and sets up its routes.
@@ -43,7 +42,7 @@ func (a *InboundController) initRouter(g *gin.RouterGroup) {
 	g.POST("/clientIps/:email", a.getClientIps)
 	g.POST("/clearClientIps/:email", a.clearClientIps)
 	g.POST("/addClient", a.addInboundClient)
-	g.POST("/createClient", a.createClientWithConfig)
+	g.POST("/addClientWithLink", a.addInboundClientWithLink)
 	g.POST("/:id/delClient/:clientId", a.delInboundClient)
 	g.POST("/updateClient/:clientId", a.updateInboundClient)
 	g.POST("/:id/resetClientTraffic/:email", a.resetClientTraffic)
@@ -323,206 +322,73 @@ func (a *InboundController) addInboundClient(c *gin.Context) {
 	}
 }
 
-// createClientWithConfig creates a new client and returns the configuration link.
-// @Summary      Create client with config link
-// @Description  Create a new client and automatically generate configuration link (vless://, vmess://, etc.)
+// addInboundClientWithLink adds a new client to an existing inbound and returns the connection link.
+// @Summary      Add client to inbound with link
+// @Description  Add a new client to an existing inbound configuration and return the connection link (vless://, vmess://, etc.)
 // @Tags         inbounds
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        request  body      object  true  "Client creation request"  example({"id": 1, "email": "user@example.com", "totalGB": 10737418240, "expiryTime": 1735689600000, "enable": true, "limitIp": 2, "subId": "randomSubId"})
-// @Success      200      {object}  entity.Msg{obj=object}  "Returns client UUID, email, and config link"
-// @Failure      400      {object}  entity.Msg
-// @Router       /inbounds/createClient [post]
-func (a *InboundController) createClientWithConfig(c *gin.Context) {
-	// Parse request
-	var req struct {
-		Id         int    `json:"id"`
-		Email      string `json:"email"`
-		TotalGB    int64  `json:"totalGB"`
-		ExpiryTime int64  `json:"expiryTime"`
-		Enable     bool   `json:"enable"`
-		LimitIP    int    `json:"limitIp"`
-		TgID       string `json:"tgId"`
-		SubID      string `json:"subId"`
-		Flow       string `json:"flow"`
-		Comment    string `json:"comment"`
-		Reset      int    `json:"reset"`
-	}
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		jsonMsg(c, "Invalid request data", err)
-		return
-	}
-
-	if req.Email == "" {
-		jsonMsg(c, "Email is required", fmt.Errorf("email cannot be empty"))
-		return
-	}
-
-	// Get the inbound
-	inbound, err := a.inboundService.GetInbound(req.Id)
+// @Param        data  body      model.Inbound  true  "Client data"
+// @Success      200   {object}  entity.Msg{obj=map[string]string}
+// @Failure      400   {object}  entity.Msg
+// @Router       /inbounds/addClientWithLink [post]
+func (a *InboundController) addInboundClientWithLink(c *gin.Context) {
+	data := &model.Inbound{}
+	err := c.ShouldBind(data)
 	if err != nil {
-		jsonMsg(c, "Failed to get inbound", err)
+		jsonMsg(c, I18nWeb(c, "pages.inbounds.toasts.inboundUpdateSuccess"), err)
 		return
 	}
 
-	// Generate client ID based on protocol
-	var clientID, password, clientData string
-	nowTs := time.Now().Unix() * 1000
-
-	switch inbound.Protocol {
-	case model.VMESS:
-		clientID = uuid.New().String()
-		clientData = fmt.Sprintf(`{
-			"id": "%s",
-			"security": "auto",
-			"email": "%s",
-			"limitIp": %d,
-			"totalGB": %d,
-			"expiryTime": %d,
-			"enable": %t,
-			"tgId": "%s",
-			"subId": "%s",
-			"comment": "%s",
-			"reset": %d,
-			"created_at": %d,
-			"updated_at": %d
-		}`, clientID, req.Email, req.LimitIP, req.TotalGB, req.ExpiryTime, req.Enable, req.TgID, req.SubID, req.Comment, req.Reset, nowTs, nowTs)
-
-	case model.VLESS:
-		clientID = uuid.New().String()
-		flow := req.Flow
-		if flow == "" {
-			flow = ""
-		}
-		clientData = fmt.Sprintf(`{
-			"id": "%s",
-			"flow": "%s",
-			"email": "%s",
-			"limitIp": %d,
-			"totalGB": %d,
-			"expiryTime": %d,
-			"enable": %t,
-			"tgId": "%s",
-			"subId": "%s",
-			"comment": "%s",
-			"reset": %d,
-			"created_at": %d,
-			"updated_at": %d
-		}`, clientID, flow, req.Email, req.LimitIP, req.TotalGB, req.ExpiryTime, req.Enable, req.TgID, req.SubID, req.Comment, req.Reset, nowTs, nowTs)
-
-	case model.Trojan:
-		password = random.Seq(10)
-		clientData = fmt.Sprintf(`{
-			"password": "%s",
-			"email": "%s",
-			"limitIp": %d,
-			"totalGB": %d,
-			"expiryTime": %d,
-			"enable": %t,
-			"tgId": "%s",
-			"subId": "%s",
-			"comment": "%s",
-			"reset": %d,
-			"created_at": %d,
-			"updated_at": %d
-		}`, password, req.Email, req.LimitIP, req.TotalGB, req.ExpiryTime, req.Enable, req.TgID, req.SubID, req.Comment, req.Reset, nowTs, nowTs)
-
-	case model.Shadowsocks:
-		password = random.Seq(32)
-		clientData = fmt.Sprintf(`{
-			"password": "%s",
-			"email": "%s",
-			"limitIp": %d,
-			"totalGB": %d,
-			"expiryTime": %d,
-			"enable": %t,
-			"tgId": "%s",
-			"subId": "%s",
-			"comment": "%s",
-			"reset": %d,
-			"created_at": %d,
-			"updated_at": %d
-		}`, password, req.Email, req.LimitIP, req.TotalGB, req.ExpiryTime, req.Enable, req.TgID, req.SubID, req.Comment, req.Reset, nowTs, nowTs)
-
-	default:
-		jsonMsg(c, "Unsupported protocol", fmt.Errorf("protocol %s not supported", inbound.Protocol))
-		return
-	}
-
-	// Parse and update inbound settings
-	var settings map[string]interface{}
-	if err := json.Unmarshal([]byte(inbound.Settings), &settings); err != nil {
-		jsonMsg(c, "Failed to parse inbound settings", err)
-		return
-	}
-
-	// Parse the client data
-	var newClient interface{}
-	if err := json.Unmarshal([]byte(clientData), &newClient); err != nil {
-		jsonMsg(c, "Failed to parse client data", err)
-		return
-	}
-
-	// Add client to settings
-	clients, ok := settings["clients"].([]interface{})
-	if !ok {
-		clients = []interface{}{}
-	}
-	clients = append(clients, newClient)
-	settings["clients"] = clients
-
-	// Marshal back to string
-	newSettings, err := json.MarshalIndent(settings, "", "  ")
+	needRestart, err := a.inboundService.AddInboundClient(data)
 	if err != nil {
-		jsonMsg(c, "Failed to marshal settings", err)
+		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), err)
 		return
 	}
 
-	inbound.Settings = string(newSettings)
-
-	// Add client to inbound
-	needRestart, err := a.inboundService.AddInboundClient(inbound)
+	// Get the inbound to generate the link
+	inbound, err := a.inboundService.GetInbound(data.Id)
 	if err != nil {
-		jsonMsg(c, "Failed to add client", err)
+		jsonMsg(c, I18nWeb(c, "pages.inbounds.toasts.obtain"), err)
 		return
 	}
 
-	// Generate configuration link
-	var settingService service.SettingService
-	host, _ := settingService.GetSubDomain()
-	if host == "" {
-		host = c.Request.Host
-	}
-
-	subService := sub.NewSubService(false, "")
-
-	// Reload inbound to get updated client list
-	inbound, err = a.inboundService.GetInbound(req.Id)
-	if err != nil {
-		jsonMsg(c, "Failed to reload inbound", err)
+	// Get clients to find the email of the newly added client
+	clients, err := a.inboundService.GetClients(data)
+	if err != nil || len(clients) == 0 {
+		jsonMsg(c, I18nWeb(c, "somethingWentWrong"), err)
 		return
 	}
 
-	configLink := subService.GetLinkWithAddress(inbound, req.Email, host)
-
-	// Prepare response
-	response := map[string]interface{}{
-		"success": true,
-		"email":   req.Email,
-		"link":    configLink,
-	}
-
-	if clientID != "" {
-		response["uuid"] = clientID
-	}
-	if password != "" {
-		response["password"] = password
-	}
-
-	jsonObj(c, response, nil)
+	// Generate link for the first client in the data (the newly added one)
+	email := clients[0].Email
 	
+	// Get the address - try settings first, then fall back to request host
+	address := ""
+	subDomain, err := a.settingService.GetSubDomain()
+	if err == nil && subDomain != "" {
+		address = subDomain
+	} else {
+		// Fall back to request host
+		address = c.Request.Host
+		if address == "" {
+			address = "localhost"
+		}
+		// Remove port from host if present
+		if idx := strings.Index(address, ":"); idx != -1 {
+			address = address[:idx]
+		}
+	}
+	
+	link := webutil.GetClientLink(inbound, email, address)
+
+	response := map[string]any{
+		"link":  link,
+		"email": email,
+	}
+
+	jsonMsgObj(c, I18nWeb(c, "pages.inbounds.toasts.inboundClientAddSuccess"), response, nil)
 	if needRestart {
 		a.xrayService.SetToNeedRestart()
 	}

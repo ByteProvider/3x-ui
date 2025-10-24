@@ -9,15 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://github.com/ByteProvider/3x-ui",
-        "contact": {
-            "name": "API Support",
-            "url": "https://github.com/ByteProvider/3x-ui/issues"
-        },
-        "license": {
-            "name": "GPL-3.0",
-            "url": "https://github.com/ByteProvider/3x-ui/blob/main/LICENSE"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -159,6 +151,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/inbounds/addClientWithLink": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a new client to an existing inbound configuration and return the connection link (vless://, vmess://, etc.)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Add client to inbound with link",
+                "parameters": [
+                    {
+                        "description": "Client data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Inbound"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
         "/inbounds/clearClientIps/{email}": {
             "post": {
                 "security": [
@@ -234,63 +286,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/entity.Msg"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/entity.Msg"
-                        }
-                    }
-                }
-            }
-        },
-        "/inbounds/createClient": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Create a new client and automatically generate configuration link (vless://, vmess://, etc.)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "inbounds"
-                ],
-                "summary": "Create client with config link",
-                "parameters": [
-                    {
-                        "description": "Client creation request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns client UUID, email, and config link",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entity.Msg"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "obj": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     },
                     "400": {
@@ -2199,25 +2194,17 @@ const docTemplate = `{
                 }
             }
         }
-    },
-    "securityDefinitions": {
-        "ApiKeyAuth": {
-            "description": "API Key authentication. Use X-API-Key header or Authorization Bearer token",
-            "type": "apiKey",
-            "name": "X-API-Key",
-            "in": "header"
-        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "2.0",
-	Host:             "localhost:2053",
-	BasePath:         "/panel/api",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "3x-ui Panel API",
-	Description:      "API documentation for 3x-ui panel - Xray management system",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
