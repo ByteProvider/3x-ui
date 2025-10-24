@@ -175,6 +175,13 @@ func (s *SubService) getLink(inbound *model.Inbound, email string) string {
 	return ""
 }
 
+// GetLinkWithAddress generates a configuration link for a client with a specified address.
+// This is a public wrapper around getLink that allows setting the address.
+func (s *SubService) GetLinkWithAddress(inbound *model.Inbound, email string, address string) string {
+	s.address = address
+	return s.getLink(inbound, email)
+}
+
 func (s *SubService) genVmessLink(inbound *model.Inbound, email string) string {
 	if inbound.Protocol != model.VMESS {
 		return ""

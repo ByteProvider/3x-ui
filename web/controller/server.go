@@ -128,6 +128,15 @@ func (a *ServerController) getCpuHistoryBucket(c *gin.Context) {
 }
 
 // getXrayVersion retrieves available Xray versions, with caching for 1 minute.
+// @Summary      Get Xray versions
+// @Description  Get list of available Xray versions for installation
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getXrayVersion [get]
 func (a *ServerController) getXrayVersion(c *gin.Context) {
 	now := time.Now().Unix()
 	if now-a.lastGetVersionsTime <= 60 { // 1 minute cache
@@ -148,6 +157,16 @@ func (a *ServerController) getXrayVersion(c *gin.Context) {
 }
 
 // installXray installs or updates Xray to the specified version.
+// @Summary      Install or update Xray
+// @Description  Install or update Xray to a specific version
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        version  path      string  true  "Xray version to install"
+// @Success      200      {object}  entity.Msg
+// @Failure      400      {object}  entity.Msg
+// @Router       /server/installXray/{version} [post]
 func (a *ServerController) installXray(c *gin.Context) {
 	version := c.Param("version")
 	err := a.serverService.UpdateXray(version)
@@ -155,6 +174,17 @@ func (a *ServerController) installXray(c *gin.Context) {
 }
 
 // updateGeofile updates the specified geo file for Xray.
+// @Summary      Update geo file
+// @Description  Update geoip or geosite database file
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        fileName  path      string  false  "Geo file name (optional)"
+// @Success      200       {object}  entity.Msg
+// @Failure      400       {object}  entity.Msg
+// @Router       /server/updateGeofile [post]
+// @Router       /server/updateGeofile/{fileName} [post]
 func (a *ServerController) updateGeofile(c *gin.Context) {
 	fileName := c.Param("fileName")
 
@@ -170,6 +200,15 @@ func (a *ServerController) updateGeofile(c *gin.Context) {
 }
 
 // stopXrayService stops the Xray service.
+// @Summary      Stop Xray service
+// @Description  Stop the running Xray service
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/stopXrayService [post]
 func (a *ServerController) stopXrayService(c *gin.Context) {
 	err := a.serverService.StopXrayService()
 	if err != nil {
@@ -180,6 +219,15 @@ func (a *ServerController) stopXrayService(c *gin.Context) {
 }
 
 // restartXrayService restarts the Xray service.
+// @Summary      Restart Xray service
+// @Description  Restart the Xray service to apply configuration changes
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/restartXrayService [post]
 func (a *ServerController) restartXrayService(c *gin.Context) {
 	err := a.serverService.RestartXrayService()
 	if err != nil {
@@ -190,6 +238,18 @@ func (a *ServerController) restartXrayService(c *gin.Context) {
 }
 
 // getLogs retrieves the application logs based on count, level, and syslog filters.
+// @Summary      Get application logs
+// @Description  Retrieve application logs with optional filtering
+// @Tags         server
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        count   path      string  true   "Number of log lines to retrieve"
+// @Param        level   formData  string  false  "Log level filter"
+// @Param        syslog  formData  string  false  "Syslog filter"
+// @Success      200     {object}  entity.Msg
+// @Failure      400     {object}  entity.Msg
+// @Router       /server/logs/{count} [post]
 func (a *ServerController) getLogs(c *gin.Context) {
 	count := c.Param("count")
 	level := c.PostForm("level")
@@ -199,6 +259,20 @@ func (a *ServerController) getLogs(c *gin.Context) {
 }
 
 // getXrayLogs retrieves Xray logs with filtering options for direct, blocked, and proxy traffic.
+// @Summary      Get Xray logs
+// @Description  Retrieve Xray logs with filtering for traffic types
+// @Tags         server
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        count       path      string  true   "Number of log lines to retrieve"
+// @Param        filter      formData  string  false  "Search filter"
+// @Param        showDirect  formData  string  false  "Show direct traffic logs"
+// @Param        showBlocked formData  string  false  "Show blocked traffic logs"
+// @Param        showProxy   formData  string  false  "Show proxy traffic logs"
+// @Success      200         {object}  entity.Msg
+// @Failure      400         {object}  entity.Msg
+// @Router       /server/xraylogs/{count} [post]
 func (a *ServerController) getXrayLogs(c *gin.Context) {
 	count := c.Param("count")
 	filter := c.PostForm("filter")
@@ -244,6 +318,15 @@ func (a *ServerController) getXrayLogs(c *gin.Context) {
 }
 
 // getConfigJson retrieves the Xray configuration as JSON.
+// @Summary      Get Xray config JSON
+// @Description  Retrieve the current Xray configuration in JSON format
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getConfigJson [get]
 func (a *ServerController) getConfigJson(c *gin.Context) {
 	configJson, err := a.serverService.GetConfigJson()
 	if err != nil {
@@ -254,6 +337,15 @@ func (a *ServerController) getConfigJson(c *gin.Context) {
 }
 
 // getDb downloads the database file.
+// @Summary      Download database
+// @Description  Download the panel database file as backup
+// @Tags         server
+// @Accept       json
+// @Produce      application/octet-stream
+// @Security     ApiKeyAuth
+// @Success      200  {file}  binary
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getDb [get]
 func (a *ServerController) getDb(c *gin.Context) {
 	db, err := a.serverService.GetDb()
 	if err != nil {
@@ -282,6 +374,16 @@ func isValidFilename(filename string) bool {
 }
 
 // importDB imports a database file and restarts the Xray service.
+// @Summary      Import database
+// @Description  Import a database file to restore panel configuration
+// @Tags         server
+// @Accept       multipart/form-data
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        db   formData  file  true  "Database file to import"
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/importDB [post]
 func (a *ServerController) importDB(c *gin.Context) {
 	// Get the file from the request body
 	file, _, err := c.Request.FormFile("db")
@@ -303,6 +405,15 @@ func (a *ServerController) importDB(c *gin.Context) {
 }
 
 // getNewX25519Cert generates a new X25519 certificate.
+// @Summary      Generate X25519 certificate
+// @Description  Generate a new X25519 key pair for Reality protocol
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewX25519Cert [get]
 func (a *ServerController) getNewX25519Cert(c *gin.Context) {
 	cert, err := a.serverService.GetNewX25519Cert()
 	if err != nil {
@@ -313,6 +424,15 @@ func (a *ServerController) getNewX25519Cert(c *gin.Context) {
 }
 
 // getNewmldsa65 generates a new ML-DSA-65 key.
+// @Summary      Generate ML-DSA-65 key
+// @Description  Generate a new ML-DSA-65 key pair for post-quantum cryptography
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewmldsa65 [get]
 func (a *ServerController) getNewmldsa65(c *gin.Context) {
 	cert, err := a.serverService.GetNewmldsa65()
 	if err != nil {
@@ -323,6 +443,16 @@ func (a *ServerController) getNewmldsa65(c *gin.Context) {
 }
 
 // getNewEchCert generates a new ECH certificate for the given SNI.
+// @Summary      Generate ECH certificate
+// @Description  Generate a new Encrypted Client Hello (ECH) certificate
+// @Tags         server
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        sni  formData  string  true  "Server Name Indication"
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewEchCert [post]
 func (a *ServerController) getNewEchCert(c *gin.Context) {
 	sni := c.PostForm("sni")
 	cert, err := a.serverService.GetNewEchCert(sni)
@@ -334,6 +464,15 @@ func (a *ServerController) getNewEchCert(c *gin.Context) {
 }
 
 // getNewVlessEnc generates a new VLESS encryption key.
+// @Summary      Generate VLESS encryption key
+// @Description  Generate a new VLESS encryption key
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewVlessEnc [get]
 func (a *ServerController) getNewVlessEnc(c *gin.Context) {
 	out, err := a.serverService.GetNewVlessEnc()
 	if err != nil {
@@ -344,6 +483,15 @@ func (a *ServerController) getNewVlessEnc(c *gin.Context) {
 }
 
 // getNewUUID generates a new UUID.
+// @Summary      Generate UUID
+// @Description  Generate a new UUID for client identification
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewUUID [get]
 func (a *ServerController) getNewUUID(c *gin.Context) {
 	uuidResp, err := a.serverService.GetNewUUID()
 	if err != nil {
@@ -355,6 +503,15 @@ func (a *ServerController) getNewUUID(c *gin.Context) {
 }
 
 // getNewmlkem768 generates a new ML-KEM-768 key.
+// @Summary      Generate ML-KEM-768 key
+// @Description  Generate a new ML-KEM-768 key pair for post-quantum cryptography
+// @Tags         server
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /server/getNewmlkem768 [get]
 func (a *ServerController) getNewmlkem768(c *gin.Context) {
 	out, err := a.serverService.GetNewmlkem768()
 	if err != nil {
