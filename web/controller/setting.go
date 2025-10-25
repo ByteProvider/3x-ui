@@ -49,6 +49,15 @@ func (a *SettingController) initRouter(g *gin.RouterGroup) {
 }
 
 // getAllSetting retrieves all current settings.
+// @Summary      Get all settings
+// @Description  Retrieve all current panel settings
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg{obj=entity.AllSetting}
+// @Failure      400  {object}  entity.Msg
+// @Router       /setting/all [post]
 func (a *SettingController) getAllSetting(c *gin.Context) {
 	allSetting, err := a.settingService.GetAllSetting()
 	if err != nil {
@@ -59,6 +68,15 @@ func (a *SettingController) getAllSetting(c *gin.Context) {
 }
 
 // getDefaultSettings retrieves the default settings based on the host.
+// @Summary      Get default settings
+// @Description  Retrieve the default settings based on the host
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /setting/defaultSettings [post]
 func (a *SettingController) getDefaultSettings(c *gin.Context) {
 	result, err := a.settingService.GetDefaultSettings(c.Request.Host)
 	if err != nil {
@@ -69,6 +87,16 @@ func (a *SettingController) getDefaultSettings(c *gin.Context) {
 }
 
 // updateSetting updates all settings with the provided data.
+// @Summary      Update settings
+// @Description  Update all settings with the provided data
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        settings  body      entity.AllSetting  true  "All settings"
+// @Success      200       {object}  entity.Msg
+// @Failure      400       {object}  entity.Msg
+// @Router       /setting/update [post]
 func (a *SettingController) updateSetting(c *gin.Context) {
 	allSetting := &entity.AllSetting{}
 	err := c.ShouldBind(allSetting)
@@ -81,6 +109,16 @@ func (a *SettingController) updateSetting(c *gin.Context) {
 }
 
 // updateUser updates the current user's username and password.
+// @Summary      Update user credentials
+// @Description  Update the current user's username and password
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        user  body      updateUserForm  true  "User credentials"
+// @Success      200   {object}  entity.Msg
+// @Failure      400   {object}  entity.Msg
+// @Router       /setting/updateUser [post]
 func (a *SettingController) updateUser(c *gin.Context) {
 	form := &updateUserForm{}
 	err := c.ShouldBind(form)
@@ -107,12 +145,30 @@ func (a *SettingController) updateUser(c *gin.Context) {
 }
 
 // restartPanel restarts the panel service after a delay.
+// @Summary      Restart panel
+// @Description  Restart the panel service after a delay
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /setting/restartPanel [post]
 func (a *SettingController) restartPanel(c *gin.Context) {
 	err := a.panelService.RestartPanel(time.Second * 3)
 	jsonMsg(c, I18nWeb(c, "pages.settings.restartPanelSuccess"), err)
 }
 
 // getDefaultXrayConfig retrieves the default Xray configuration.
+// @Summary      Get default Xray config
+// @Description  Retrieve the default Xray configuration
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /setting/getDefaultJsonConfig [get]
 func (a *SettingController) getDefaultXrayConfig(c *gin.Context) {
 	defaultJsonConfig, err := a.settingService.GetDefaultXrayConfig()
 	if err != nil {
@@ -123,6 +179,15 @@ func (a *SettingController) getDefaultXrayConfig(c *gin.Context) {
 }
 
 // getApiKey retrieves the current user's API key
+// @Summary      Get API key
+// @Description  Retrieve the current user's API key
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg{obj=string}
+// @Failure      401  {object}  entity.Msg
+// @Router       /setting/getApiKey [get]
 func (a *SettingController) getApiKey(c *gin.Context) {
 	user := session.GetLoginUser(c)
 	if user == nil {
@@ -139,6 +204,15 @@ func (a *SettingController) getApiKey(c *gin.Context) {
 }
 
 // generateApiKey generates a new API key for the current user
+// @Summary      Generate API key
+// @Description  Generate a new API key for the current user
+// @Tags         settings
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg{obj=string}
+// @Failure      401  {object}  entity.Msg
+// @Router       /setting/generateApiKey [post]
 func (a *SettingController) generateApiKey(c *gin.Context) {
 	user := session.GetLoginUser(c)
 	if user == nil {

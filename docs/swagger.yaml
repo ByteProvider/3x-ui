@@ -1,5 +1,228 @@
 basePath: /panel/api
 definitions:
+  controller.AddClientWithLinkRequest:
+    properties:
+      email:
+        description: Client email address
+        example: user@example.com
+        type: string
+      id:
+        description: Inbound ID
+        example: 1
+        type: integer
+    type: object
+  controller.AddClientWithLinkResponse:
+    properties:
+      email:
+        description: Client email
+        example: user@example.com
+        type: string
+      link:
+        description: Generated config link
+        example: vless://uuid@host:port?type=tcp#email
+        type: string
+      uuid:
+        description: Client UUID or password
+        example: 9cf47c17-6512-40ec-87e0-e59801366929
+        type: string
+    type: object
+  controller.updateUserForm:
+    properties:
+      newPassword:
+        type: string
+      newUsername:
+        type: string
+      oldPassword:
+        type: string
+      oldUsername:
+        type: string
+    type: object
+  entity.AllSetting:
+    properties:
+      datepicker:
+        description: Date picker format
+        type: string
+      expireDiff:
+        description: Expiration warning threshold in days
+        type: integer
+      externalTrafficInformEnable:
+        description: Enable external traffic reporting
+        type: boolean
+      externalTrafficInformURI:
+        description: URI for external traffic reporting
+        type: string
+      ldapAutoCreate:
+        type: boolean
+      ldapAutoDelete:
+        type: boolean
+      ldapBaseDN:
+        type: string
+      ldapBindDN:
+        type: string
+      ldapDefaultExpiryDays:
+        type: integer
+      ldapDefaultLimitIP:
+        type: integer
+      ldapDefaultTotalGB:
+        type: integer
+      ldapEnable:
+        description: LDAP settings
+        type: boolean
+      ldapFlagField:
+        description: Generic flag configuration
+        type: string
+      ldapHost:
+        type: string
+      ldapInboundTags:
+        type: string
+      ldapInvertFlag:
+        type: boolean
+      ldapPassword:
+        type: string
+      ldapPort:
+        type: integer
+      ldapSyncCron:
+        type: string
+      ldapTruthyValues:
+        type: string
+      ldapUseTLS:
+        type: boolean
+      ldapUserAttr:
+        description: e.g., mail or uid
+        type: string
+      ldapUserFilter:
+        type: string
+      ldapVlessField:
+        type: string
+      pageSize:
+        description: UI settings
+        type: integer
+      remarkModel:
+        description: Remark model pattern for inbounds
+        type: string
+      sessionMaxAge:
+        description: Session maximum age in minutes
+        type: integer
+      subCertFile:
+        description: SSL certificate file for subscription server
+        type: string
+      subDomain:
+        description: Domain for subscription server validation
+        type: string
+      subEnable:
+        description: Subscription server settings
+        type: boolean
+      subEncrypt:
+        description: Encrypt subscription responses
+        type: boolean
+      subJsonEnable:
+        description: Enable JSON subscription endpoint
+        type: boolean
+      subJsonFragment:
+        description: JSON subscription fragment configuration
+        type: string
+      subJsonMux:
+        description: JSON subscription mux configuration
+        type: string
+      subJsonNoises:
+        description: JSON subscription noise configuration
+        type: string
+      subJsonPath:
+        description: Path for JSON subscription endpoint
+        type: string
+      subJsonRules:
+        type: string
+      subJsonURI:
+        description: JSON subscription server URI
+        type: string
+      subKeyFile:
+        description: SSL private key file for subscription server
+        type: string
+      subListen:
+        description: Subscription server listen IP
+        type: string
+      subPath:
+        description: Base path for subscription URLs
+        type: string
+      subPort:
+        description: Subscription server port
+        type: integer
+      subShowInfo:
+        description: Show client information in subscriptions
+        type: boolean
+      subTitle:
+        description: Subscription title
+        type: string
+      subURI:
+        description: Subscription server URI
+        type: string
+      subUpdates:
+        description: Subscription update interval in minutes
+        type: integer
+      swaggerEnable:
+        description: Enable Swagger API documentation
+        type: boolean
+      tgBotAPIServer:
+        description: Custom API server for Telegram bot
+        type: string
+      tgBotBackup:
+        description: Enable database backup via Telegram
+        type: boolean
+      tgBotChatId:
+        description: Telegram chat ID for notifications
+        type: string
+      tgBotEnable:
+        description: Telegram bot settings
+        type: boolean
+      tgBotLoginNotify:
+        description: Send login notifications
+        type: boolean
+      tgBotProxy:
+        description: Proxy URL for Telegram bot
+        type: string
+      tgBotToken:
+        description: Telegram bot token
+        type: string
+      tgCpu:
+        description: CPU usage threshold for alerts
+        type: integer
+      tgLang:
+        description: Telegram bot language
+        type: string
+      tgRunTime:
+        description: Cron schedule for Telegram notifications
+        type: string
+      timeLocation:
+        description: Security settings
+        type: string
+      trafficDiff:
+        description: Traffic warning threshold percentage
+        type: integer
+      twoFactorEnable:
+        description: Enable two-factor authentication
+        type: boolean
+      twoFactorToken:
+        description: Two-factor authentication token
+        type: string
+      webBasePath:
+        description: Base path for web panel URLs
+        type: string
+      webCertFile:
+        description: Path to SSL certificate file for web server
+        type: string
+      webDomain:
+        description: Web server domain for domain validation
+        type: string
+      webKeyFile:
+        description: Path to SSL private key file for web server
+        type: string
+      webListen:
+        description: Web server settings
+        type: string
+      webPort:
+        description: Web server port number
+        type: integer
+    type: object
   entity.Msg:
     properties:
       msg:
@@ -246,6 +469,305 @@ paths:
       summary: Send backup to Telegram
       tags:
       - backup
+  /inbounds/{id}/delClient/{clientId}:
+    post:
+      consumes:
+      - application/json
+      description: Delete a client from an inbound by inbound ID and client ID
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Client ID
+        in: path
+        name: clientId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete inbound client
+      tags:
+      - inbounds
+  /inbounds/{id}/delClientByEmail/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Delete a client from an inbound by email address
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete client by email
+      tags:
+      - inbounds
+  /inbounds/{id}/resetClientTraffic/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Reset the traffic counter for a specific client in an inbound
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset client traffic
+      tags:
+      - inbounds
+  /inbounds/add:
+    post:
+      consumes:
+      - application/json
+      description: Create a new inbound configuration
+      parameters:
+      - description: Inbound configuration
+        in: body
+        name: inbound
+        required: true
+        schema:
+          $ref: '#/definitions/model.Inbound'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/model.Inbound'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Add new inbound
+      tags:
+      - inbounds
+  /inbounds/addClient:
+    post:
+      consumes:
+      - application/json
+      description: Add a new client to an existing inbound
+      parameters:
+      - description: Inbound client data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Inbound'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Add inbound client
+      tags:
+      - inbounds
+  /inbounds/addClientWithLink:
+    post:
+      consumes:
+      - application/json
+      description: Add a new client to an existing inbound with only email and inbound
+        id, using default values for other parameters
+      parameters:
+      - description: Inbound ID and client email
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/controller.AddClientWithLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/controller.AddClientWithLinkResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Add inbound client with link
+      tags:
+      - inbounds
+  /inbounds/clearClientIps/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Clear the IP addresses for a client by email
+      parameters:
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Clear client IPs
+      tags:
+      - inbounds
+  /inbounds/clientIps/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the IP addresses associated with a client by email
+      parameters:
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get client IPs
+      tags:
+      - inbounds
+  /inbounds/del/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Delete an inbound configuration by its ID
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete inbound
+      tags:
+      - inbounds
+  /inbounds/delDepletedClients/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Delete clients in an inbound who have exhausted their traffic limits
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete depleted clients
+      tags:
+      - inbounds
   /inbounds/get/{id}:
     get:
       consumes:
@@ -282,6 +804,114 @@ paths:
       summary: Get inbound by ID
       tags:
       - inbounds
+  /inbounds/getClientTraffics/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve traffic statistics for a specific client by email address
+      parameters:
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get client traffic by email
+      tags:
+      - inbounds
+  /inbounds/getClientTrafficsById/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve traffic statistics for clients in a specific inbound by
+        ID
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get client traffic by ID
+      tags:
+      - inbounds
+  /inbounds/import:
+    post:
+      consumes:
+      - application/json
+      description: Import an inbound configuration from provided JSON data
+      parameters:
+      - description: Inbound JSON data
+        in: formData
+        name: data
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/model.Inbound'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Import inbound
+      tags:
+      - inbounds
+  /inbounds/lastOnline:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the last online timestamps for clients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get last online clients
+      tags:
+      - inbounds
   /inbounds/list:
     get:
       consumes:
@@ -314,6 +944,179 @@ paths:
       summary: List all inbounds
       tags:
       - inbounds
+  /inbounds/onlines:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the list of currently online clients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get online clients
+      tags:
+      - inbounds
+  /inbounds/resetAllClientTraffics/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Reset traffic counters for all clients in a specific inbound
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset all client traffics
+      tags:
+      - inbounds
+  /inbounds/resetAllTraffics:
+    post:
+      consumes:
+      - application/json
+      description: Reset all traffic counters across all inbounds
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset all traffics
+      tags:
+      - inbounds
+  /inbounds/update/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Update an existing inbound configuration
+      parameters:
+      - description: Inbound ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated inbound configuration
+        in: body
+        name: inbound
+        required: true
+        schema:
+          $ref: '#/definitions/model.Inbound'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/model.Inbound'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update inbound
+      tags:
+      - inbounds
+  /inbounds/updateClient/{clientId}:
+    post:
+      consumes:
+      - application/json
+      description: Update a client's configuration in an inbound
+      parameters:
+      - description: Client ID
+        in: path
+        name: clientId
+        required: true
+        type: string
+      - description: Updated client data
+        in: body
+        name: inbound
+        required: true
+        schema:
+          $ref: '#/definitions/model.Inbound'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update inbound client
+      tags:
+      - inbounds
+  /inbounds/updateClientTraffic/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Update the traffic statistics for a client by email
+      parameters:
+      - description: Client email address
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: Traffic data (upload, download)
+        in: body
+        name: traffic
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update client traffic
+      tags:
+      - inbounds
   /server/cpuHistory/{bucket}:
     get:
       consumes:
@@ -339,6 +1142,312 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get CPU usage history
+      tags:
+      - server
+  /server/getConfigJson:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the Xray configuration as JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Xray config
+      tags:
+      - server
+  /server/getDb:
+    get:
+      consumes:
+      - application/json
+      description: Download the database file
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Download database
+      tags:
+      - server
+  /server/getNewEchCert:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new ECH certificate for the given SNI
+      parameters:
+      - description: SNI (Server Name Indication)
+        in: formData
+        name: sni
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate ECH certificate
+      tags:
+      - server
+  /server/getNewUUID:
+    get:
+      consumes:
+      - application/json
+      description: Generate a new UUID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate UUID
+      tags:
+      - server
+  /server/getNewVlessEnc:
+    get:
+      consumes:
+      - application/json
+      description: Generate a new VLESS encryption key
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate VLESS encryption key
+      tags:
+      - server
+  /server/getNewX25519Cert:
+    get:
+      consumes:
+      - application/json
+      description: Generate a new X25519 certificate
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate X25519 certificate
+      tags:
+      - server
+  /server/getNewmldsa65:
+    get:
+      consumes:
+      - application/json
+      description: Generate a new ML-DSA-65 key
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate ML-DSA-65 key
+      tags:
+      - server
+  /server/getNewmlkem768:
+    get:
+      consumes:
+      - application/json
+      description: Generate a new ML-KEM-768 key
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate ML-KEM-768 key
+      tags:
+      - server
+  /server/getXrayVersion:
+    get:
+      consumes:
+      - application/json
+      description: Get list of available Xray versions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Xray versions
+      tags:
+      - server
+  /server/importDB:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Import a database file and restart the Xray service
+      parameters:
+      - description: Database file
+        in: formData
+        name: db
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Import database
+      tags:
+      - server
+  /server/installXray/{version}:
+    post:
+      consumes:
+      - application/json
+      description: Install or update Xray to the specified version
+      parameters:
+      - description: Xray version
+        in: path
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Install Xray version
+      tags:
+      - server
+  /server/logs/{count}:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the application logs based on count, level, and syslog
+        filters
+      parameters:
+      - description: Number of log entries
+        in: path
+        name: count
+        required: true
+        type: integer
+      - description: Log level filter
+        in: formData
+        name: level
+        type: string
+      - description: Syslog filter
+        in: formData
+        name: syslog
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get application logs
+      tags:
+      - server
+  /server/restartXrayService:
+    post:
+      consumes:
+      - application/json
+      description: Restart the Xray service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Restart Xray service
       tags:
       - server
   /server/status:
@@ -368,6 +1477,471 @@ paths:
       summary: Get server status
       tags:
       - server
+  /server/stopXrayService:
+    post:
+      consumes:
+      - application/json
+      description: Stop the Xray service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Stop Xray service
+      tags:
+      - server
+  /server/updateGeofile/{fileName}:
+    post:
+      consumes:
+      - application/json
+      description: Update the specified geo file for Xray
+      parameters:
+      - description: Geo file name
+        in: path
+        name: fileName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update geo file
+      tags:
+      - server
+  /server/xraylogs/{count}:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve Xray logs with filtering options for direct, blocked,
+        and proxy traffic
+      parameters:
+      - description: Number of log entries
+        in: path
+        name: count
+        required: true
+        type: integer
+      - description: Log filter
+        in: formData
+        name: filter
+        type: string
+      - description: Show direct traffic
+        in: formData
+        name: showDirect
+        type: string
+      - description: Show blocked traffic
+        in: formData
+        name: showBlocked
+        type: string
+      - description: Show proxy traffic
+        in: formData
+        name: showProxy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Xray logs
+      tags:
+      - server
+  /setting/all:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve all current panel settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  $ref: '#/definitions/entity.AllSetting'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all settings
+      tags:
+      - settings
+  /setting/defaultSettings:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the default settings based on the host
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get default settings
+      tags:
+      - settings
+  /setting/generateApiKey:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new API key for the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Generate API key
+      tags:
+      - settings
+  /setting/getApiKey:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the current user's API key
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entity.Msg'
+            - properties:
+                obj:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get API key
+      tags:
+      - settings
+  /setting/getDefaultJsonConfig:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the default Xray configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get default Xray config
+      tags:
+      - settings
+  /setting/restartPanel:
+    post:
+      consumes:
+      - application/json
+      description: Restart the panel service after a delay
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Restart panel
+      tags:
+      - settings
+  /setting/update:
+    post:
+      consumes:
+      - application/json
+      description: Update all settings with the provided data
+      parameters:
+      - description: All settings
+        in: body
+        name: settings
+        required: true
+        schema:
+          $ref: '#/definitions/entity.AllSetting'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update settings
+      tags:
+      - settings
+  /setting/updateUser:
+    post:
+      consumes:
+      - application/json
+      description: Update the current user's username and password
+      parameters:
+      - description: User credentials
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.updateUserForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user credentials
+      tags:
+      - settings
+  /xray/:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve the Xray configuration template and inbound tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Xray settings
+      tags:
+      - xray
+  /xray/getDefaultJsonConfig:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the default Xray configuration
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get default Xray config
+      tags:
+      - xray
+  /xray/getOutboundsTraffic:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the traffic statistics for outbounds
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get outbounds traffic
+      tags:
+      - xray
+  /xray/getXrayResult:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the current Xray service result
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Xray result
+      tags:
+      - xray
+  /xray/resetOutboundsTraffic:
+    post:
+      consumes:
+      - application/json
+      description: Reset the traffic statistics for the specified outbound tag
+      parameters:
+      - description: Outbound tag
+        in: formData
+        name: tag
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset outbound traffic
+      tags:
+      - xray
+  /xray/update:
+    post:
+      consumes:
+      - application/json
+      description: Update the Xray configuration settings
+      parameters:
+      - description: Xray settings JSON
+        in: formData
+        name: xraySetting
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Xray settings
+      tags:
+      - xray
+  /xray/warp/{action}:
+    post:
+      consumes:
+      - application/json
+      description: Handle Warp-related operations (data, del, config, reg, license)
+      parameters:
+      - description: Warp action (data, del, config, reg, license)
+        in: path
+        name: action
+        required: true
+        type: string
+      - description: Private key (for reg action)
+        in: formData
+        name: privateKey
+        type: string
+      - description: Public key (for reg action)
+        in: formData
+        name: publicKey
+        type: string
+      - description: License (for license action)
+        in: formData
+        name: license
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Msg'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.Msg'
+      security:
+      - ApiKeyAuth: []
+      summary: Handle Warp operations
+      tags:
+      - xray
 securityDefinitions:
   ApiKeyAuth:
     description: API Key authentication. Use X-API-Key header or Authorization Bearer

@@ -37,6 +37,15 @@ func (a *XraySettingController) initRouter(g *gin.RouterGroup) {
 }
 
 // getXraySetting retrieves the Xray configuration template and inbound tags.
+// @Summary      Get Xray settings
+// @Description  Retrieve the Xray configuration template and inbound tags
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /xray/ [post]
 func (a *XraySettingController) getXraySetting(c *gin.Context) {
 	xraySetting, err := a.SettingService.GetXrayConfigTemplate()
 	if err != nil {
@@ -53,6 +62,16 @@ func (a *XraySettingController) getXraySetting(c *gin.Context) {
 }
 
 // updateSetting updates the Xray configuration settings.
+// @Summary      Update Xray settings
+// @Description  Update the Xray configuration settings
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        xraySetting  formData  string  true  "Xray settings JSON"
+// @Success      200          {object}  entity.Msg
+// @Failure      400          {object}  entity.Msg
+// @Router       /xray/update [post]
 func (a *XraySettingController) updateSetting(c *gin.Context) {
 	xraySetting := c.PostForm("xraySetting")
 	err := a.XraySettingService.SaveXraySetting(xraySetting)
@@ -60,6 +79,15 @@ func (a *XraySettingController) updateSetting(c *gin.Context) {
 }
 
 // getDefaultXrayConfig retrieves the default Xray configuration.
+// @Summary      Get default Xray config
+// @Description  Retrieve the default Xray configuration
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /xray/getDefaultJsonConfig [get]
 func (a *XraySettingController) getDefaultXrayConfig(c *gin.Context) {
 	defaultJsonConfig, err := a.SettingService.GetDefaultXrayConfig()
 	if err != nil {
@@ -70,11 +98,33 @@ func (a *XraySettingController) getDefaultXrayConfig(c *gin.Context) {
 }
 
 // getXrayResult retrieves the current Xray service result.
+// @Summary      Get Xray result
+// @Description  Retrieve the current Xray service result
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /xray/getXrayResult [get]
 func (a *XraySettingController) getXrayResult(c *gin.Context) {
 	jsonObj(c, a.XrayService.GetXrayResult(), nil)
 }
 
 // warp handles Warp-related operations based on the action parameter.
+// @Summary      Handle Warp operations
+// @Description  Handle Warp-related operations (data, del, config, reg, license)
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        action      path      string  true   "Warp action (data, del, config, reg, license)"
+// @Param        privateKey  formData  string  false  "Private key (for reg action)"
+// @Param        publicKey   formData  string  false  "Public key (for reg action)"
+// @Param        license     formData  string  false  "License (for license action)"
+// @Success      200         {object}  entity.Msg
+// @Failure      400         {object}  entity.Msg
+// @Router       /xray/warp/{action} [post]
 func (a *XraySettingController) warp(c *gin.Context) {
 	action := c.Param("action")
 	var resp string
@@ -99,6 +149,15 @@ func (a *XraySettingController) warp(c *gin.Context) {
 }
 
 // getOutboundsTraffic retrieves the traffic statistics for outbounds.
+// @Summary      Get outbounds traffic
+// @Description  Retrieve the traffic statistics for outbounds
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /xray/getOutboundsTraffic [get]
 func (a *XraySettingController) getOutboundsTraffic(c *gin.Context) {
 	outboundsTraffic, err := a.OutboundService.GetOutboundsTraffic()
 	if err != nil {
@@ -109,6 +168,16 @@ func (a *XraySettingController) getOutboundsTraffic(c *gin.Context) {
 }
 
 // resetOutboundsTraffic resets the traffic statistics for the specified outbound tag.
+// @Summary      Reset outbound traffic
+// @Description  Reset the traffic statistics for the specified outbound tag
+// @Tags         xray
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        tag  formData  string  true  "Outbound tag"
+// @Success      200  {object}  entity.Msg
+// @Failure      400  {object}  entity.Msg
+// @Router       /xray/resetOutboundsTraffic [post]
 func (a *XraySettingController) resetOutboundsTraffic(c *gin.Context) {
 	tag := c.PostForm("tag")
 	err := a.OutboundService.ResetOutboundTraffic(tag)

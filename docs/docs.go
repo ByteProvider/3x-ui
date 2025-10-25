@@ -57,6 +57,337 @@ const docTemplate = `{
                 }
             }
         },
+        "/inbounds/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new inbound configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Add new inbound",
+                "parameters": [
+                    {
+                        "description": "Inbound configuration",
+                        "name": "inbound",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Inbound"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/model.Inbound"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/addClient": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a new client to an existing inbound",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Add inbound client",
+                "parameters": [
+                    {
+                        "description": "Inbound client data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Inbound"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/addClientWithLink": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Add a new client to an existing inbound with only email and inbound id, using default values for other parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Add inbound client with link",
+                "parameters": [
+                    {
+                        "description": "Inbound ID and client email",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.AddClientWithLinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/controller.AddClientWithLinkResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/clearClientIps/{email}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Clear the IP addresses for a client by email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Clear client IPs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/clientIps/{email}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the IP addresses associated with a client by email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get client IPs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/del/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete an inbound configuration by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Delete inbound",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/delDepletedClients/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete clients in an inbound who have exhausted their traffic limits",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Delete depleted clients",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
         "/inbounds/get/{id}": {
             "get": {
                 "security": [
@@ -111,6 +442,181 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/getClientTraffics/{email}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve traffic statistics for a specific client by email address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get client traffic by email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/getClientTrafficsById/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve traffic statistics for clients in a specific inbound by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get client traffic by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/import": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Import an inbound configuration from provided JSON data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Import inbound",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Inbound JSON data",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/model.Inbound"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/lastOnline": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the last online timestamps for clients",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get last online clients",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/entity.Msg"
                         }
@@ -173,6 +679,435 @@ const docTemplate = `{
                 }
             }
         },
+        "/inbounds/onlines": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the list of currently online clients",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Get online clients",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/resetAllClientTraffics/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reset traffic counters for all clients in a specific inbound",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Reset all client traffics",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/resetAllTraffics": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reset all traffic counters across all inbounds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Reset all traffics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/update/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing inbound configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Update inbound",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated inbound configuration",
+                        "name": "inbound",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Inbound"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/model.Inbound"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/updateClient/{clientId}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a client's configuration in an inbound",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Update inbound client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated client data",
+                        "name": "inbound",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Inbound"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/updateClientTraffic/{email}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the traffic statistics for a client by email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Update client traffic",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Traffic data (upload, download)",
+                        "name": "traffic",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/{id}/delClient/{clientId}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a client from an inbound by inbound ID and client ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Delete inbound client",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "clientId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/{id}/delClientByEmail/{email}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a client from an inbound by email address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Delete client by email",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/inbounds/{id}/resetClientTraffic/{email}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reset the traffic counter for a specific client in an inbound",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "inbounds"
+                ],
+                "summary": "Reset client traffic",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Inbound ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Client email address",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
         "/server/cpuHistory/{bucket}": {
             "get": {
                 "security": [
@@ -200,6 +1135,496 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getConfigJson": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the Xray configuration as JSON",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get Xray config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getDb": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Download the database file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Download database",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewEchCert": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new ECH certificate for the given SNI",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate ECH certificate",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SNI (Server Name Indication)",
+                        "name": "sni",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewUUID": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new UUID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate UUID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewVlessEnc": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new VLESS encryption key",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate VLESS encryption key",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewX25519Cert": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new X25519 certificate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate X25519 certificate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewmldsa65": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new ML-DSA-65 key",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate ML-DSA-65 key",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getNewmlkem768": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new ML-KEM-768 key",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Generate ML-KEM-768 key",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/getXrayVersion": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get list of available Xray versions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get Xray versions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/importDB": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Import a database file and restart the Xray service",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Import database",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Database file",
+                        "name": "db",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/installXray/{version}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Install or update Xray to the specified version",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Install Xray version",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Xray version",
+                        "name": "version",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/logs/{count}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the application logs based on count, level, and syslog filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get application logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of log entries",
+                        "name": "count",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Log level filter",
+                        "name": "level",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Syslog filter",
+                        "name": "syslog",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/restartXrayService": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Restart the Xray service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Restart Xray service",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -261,9 +1686,1072 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/server/stopXrayService": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Stop the Xray service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Stop Xray service",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/updateGeofile/{fileName}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the specified geo file for Xray",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Update geo file",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Geo file name",
+                        "name": "fileName",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/xraylogs/{count}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve Xray logs with filtering options for direct, blocked, and proxy traffic",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "server"
+                ],
+                "summary": "Get Xray logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of log entries",
+                        "name": "count",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Log filter",
+                        "name": "filter",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Show direct traffic",
+                        "name": "showDirect",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Show blocked traffic",
+                        "name": "showBlocked",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Show proxy traffic",
+                        "name": "showProxy",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/all": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve all current panel settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get all settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "$ref": "#/definitions/entity.AllSetting"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/defaultSettings": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the default settings based on the host",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get default settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/generateApiKey": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Generate a new API key for the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Generate API key",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/getApiKey": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the current user's API key",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get API key",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entity.Msg"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "obj": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/getDefaultJsonConfig": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the default Xray configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get default Xray config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/restartPanel": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Restart the panel service after a delay",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Restart panel",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update all settings with the provided data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update settings",
+                "parameters": [
+                    {
+                        "description": "All settings",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.AllSetting"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/setting/updateUser": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the current user's username and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update user credentials",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.updateUserForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the Xray configuration template and inbound tags",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Get Xray settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/getDefaultJsonConfig": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the default Xray configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Get default Xray config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/getOutboundsTraffic": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the traffic statistics for outbounds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Get outbounds traffic",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/getXrayResult": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieve the current Xray service result",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Get Xray result",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/resetOutboundsTraffic": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Reset the traffic statistics for the specified outbound tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Reset outbound traffic",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Outbound tag",
+                        "name": "tag",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the Xray configuration settings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Update Xray settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Xray settings JSON",
+                        "name": "xraySetting",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
+        },
+        "/xray/warp/{action}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Handle Warp-related operations (data, del, config, reg, license)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "xray"
+                ],
+                "summary": "Handle Warp operations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Warp action (data, del, config, reg, license)",
+                        "name": "action",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Private key (for reg action)",
+                        "name": "privateKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Public key (for reg action)",
+                        "name": "publicKey",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "License (for license action)",
+                        "name": "license",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Msg"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "controller.AddClientWithLinkRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Client email address",
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "id": {
+                    "description": "Inbound ID",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "controller.AddClientWithLinkResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Client email",
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "link": {
+                    "description": "Generated config link",
+                    "type": "string",
+                    "example": "vless://uuid@host:port?type=tcp#email"
+                },
+                "uuid": {
+                    "description": "Client UUID or password",
+                    "type": "string",
+                    "example": "9cf47c17-6512-40ec-87e0-e59801366929"
+                }
+            }
+        },
+        "controller.updateUserForm": {
+            "type": "object",
+            "properties": {
+                "newPassword": {
+                    "type": "string"
+                },
+                "newUsername": {
+                    "type": "string"
+                },
+                "oldPassword": {
+                    "type": "string"
+                },
+                "oldUsername": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.AllSetting": {
+            "type": "object",
+            "properties": {
+                "datepicker": {
+                    "description": "Date picker format",
+                    "type": "string"
+                },
+                "expireDiff": {
+                    "description": "Expiration warning threshold in days",
+                    "type": "integer"
+                },
+                "externalTrafficInformEnable": {
+                    "description": "Enable external traffic reporting",
+                    "type": "boolean"
+                },
+                "externalTrafficInformURI": {
+                    "description": "URI for external traffic reporting",
+                    "type": "string"
+                },
+                "ldapAutoCreate": {
+                    "type": "boolean"
+                },
+                "ldapAutoDelete": {
+                    "type": "boolean"
+                },
+                "ldapBaseDN": {
+                    "type": "string"
+                },
+                "ldapBindDN": {
+                    "type": "string"
+                },
+                "ldapDefaultExpiryDays": {
+                    "type": "integer"
+                },
+                "ldapDefaultLimitIP": {
+                    "type": "integer"
+                },
+                "ldapDefaultTotalGB": {
+                    "type": "integer"
+                },
+                "ldapEnable": {
+                    "description": "LDAP settings",
+                    "type": "boolean"
+                },
+                "ldapFlagField": {
+                    "description": "Generic flag configuration",
+                    "type": "string"
+                },
+                "ldapHost": {
+                    "type": "string"
+                },
+                "ldapInboundTags": {
+                    "type": "string"
+                },
+                "ldapInvertFlag": {
+                    "type": "boolean"
+                },
+                "ldapPassword": {
+                    "type": "string"
+                },
+                "ldapPort": {
+                    "type": "integer"
+                },
+                "ldapSyncCron": {
+                    "type": "string"
+                },
+                "ldapTruthyValues": {
+                    "type": "string"
+                },
+                "ldapUseTLS": {
+                    "type": "boolean"
+                },
+                "ldapUserAttr": {
+                    "description": "e.g., mail or uid",
+                    "type": "string"
+                },
+                "ldapUserFilter": {
+                    "type": "string"
+                },
+                "ldapVlessField": {
+                    "type": "string"
+                },
+                "pageSize": {
+                    "description": "UI settings",
+                    "type": "integer"
+                },
+                "remarkModel": {
+                    "description": "Remark model pattern for inbounds",
+                    "type": "string"
+                },
+                "sessionMaxAge": {
+                    "description": "Session maximum age in minutes",
+                    "type": "integer"
+                },
+                "subCertFile": {
+                    "description": "SSL certificate file for subscription server",
+                    "type": "string"
+                },
+                "subDomain": {
+                    "description": "Domain for subscription server validation",
+                    "type": "string"
+                },
+                "subEnable": {
+                    "description": "Subscription server settings",
+                    "type": "boolean"
+                },
+                "subEncrypt": {
+                    "description": "Encrypt subscription responses",
+                    "type": "boolean"
+                },
+                "subJsonEnable": {
+                    "description": "Enable JSON subscription endpoint",
+                    "type": "boolean"
+                },
+                "subJsonFragment": {
+                    "description": "JSON subscription fragment configuration",
+                    "type": "string"
+                },
+                "subJsonMux": {
+                    "description": "JSON subscription mux configuration",
+                    "type": "string"
+                },
+                "subJsonNoises": {
+                    "description": "JSON subscription noise configuration",
+                    "type": "string"
+                },
+                "subJsonPath": {
+                    "description": "Path for JSON subscription endpoint",
+                    "type": "string"
+                },
+                "subJsonRules": {
+                    "type": "string"
+                },
+                "subJsonURI": {
+                    "description": "JSON subscription server URI",
+                    "type": "string"
+                },
+                "subKeyFile": {
+                    "description": "SSL private key file for subscription server",
+                    "type": "string"
+                },
+                "subListen": {
+                    "description": "Subscription server listen IP",
+                    "type": "string"
+                },
+                "subPath": {
+                    "description": "Base path for subscription URLs",
+                    "type": "string"
+                },
+                "subPort": {
+                    "description": "Subscription server port",
+                    "type": "integer"
+                },
+                "subShowInfo": {
+                    "description": "Show client information in subscriptions",
+                    "type": "boolean"
+                },
+                "subTitle": {
+                    "description": "Subscription title",
+                    "type": "string"
+                },
+                "subURI": {
+                    "description": "Subscription server URI",
+                    "type": "string"
+                },
+                "subUpdates": {
+                    "description": "Subscription update interval in minutes",
+                    "type": "integer"
+                },
+                "swaggerEnable": {
+                    "description": "Enable Swagger API documentation",
+                    "type": "boolean"
+                },
+                "tgBotAPIServer": {
+                    "description": "Custom API server for Telegram bot",
+                    "type": "string"
+                },
+                "tgBotBackup": {
+                    "description": "Enable database backup via Telegram",
+                    "type": "boolean"
+                },
+                "tgBotChatId": {
+                    "description": "Telegram chat ID for notifications",
+                    "type": "string"
+                },
+                "tgBotEnable": {
+                    "description": "Telegram bot settings",
+                    "type": "boolean"
+                },
+                "tgBotLoginNotify": {
+                    "description": "Send login notifications",
+                    "type": "boolean"
+                },
+                "tgBotProxy": {
+                    "description": "Proxy URL for Telegram bot",
+                    "type": "string"
+                },
+                "tgBotToken": {
+                    "description": "Telegram bot token",
+                    "type": "string"
+                },
+                "tgCpu": {
+                    "description": "CPU usage threshold for alerts",
+                    "type": "integer"
+                },
+                "tgLang": {
+                    "description": "Telegram bot language",
+                    "type": "string"
+                },
+                "tgRunTime": {
+                    "description": "Cron schedule for Telegram notifications",
+                    "type": "string"
+                },
+                "timeLocation": {
+                    "description": "Security settings",
+                    "type": "string"
+                },
+                "trafficDiff": {
+                    "description": "Traffic warning threshold percentage",
+                    "type": "integer"
+                },
+                "twoFactorEnable": {
+                    "description": "Enable two-factor authentication",
+                    "type": "boolean"
+                },
+                "twoFactorToken": {
+                    "description": "Two-factor authentication token",
+                    "type": "string"
+                },
+                "webBasePath": {
+                    "description": "Base path for web panel URLs",
+                    "type": "string"
+                },
+                "webCertFile": {
+                    "description": "Path to SSL certificate file for web server",
+                    "type": "string"
+                },
+                "webDomain": {
+                    "description": "Web server domain for domain validation",
+                    "type": "string"
+                },
+                "webKeyFile": {
+                    "description": "Path to SSL private key file for web server",
+                    "type": "string"
+                },
+                "webListen": {
+                    "description": "Web server settings",
+                    "type": "string"
+                },
+                "webPort": {
+                    "description": "Web server port number",
+                    "type": "integer"
+                }
+            }
+        },
         "entity.Msg": {
             "type": "object",
             "properties": {
